@@ -41,15 +41,20 @@ when isMainModule:
   echo aa * b
   ]#
 
-  # for y we need vector of lenth 10
+  # for y we need vector of lenth 10 := WRONG ! WE decided to use Tensors everywhere, so it should be matrix [10,1]
   # for x we need single vector of length 784, not 28x28
   var t: seq[(Tensor[F],Tensor[F])]
   for i in 0 .. (x_train.shape[0]-1):
     var f = zeros[F]([10])
     f[y_train[i]] = 1.0
+    f = f.reshape(f.shape[0],1)
     t.add( (x_train.atAxisIndex(0,i).squeeze(0).reshape(784) , f) )
+
+  var e: seq[(Tensor[F],int)]
+  for i in 0 .. (x_test.shape[0]-1):
+    e.add( (x_test.atAxisIndex(0,i).squeeze(0).reshape(784) , y_test[i]) )
   
-  ch1.SGD(net, t, 30, 10, 0.3)
+  ch1.SGD(net, t, 30, 10, 3.0, e)
 
 
   ## Inline iterator over an axis.
